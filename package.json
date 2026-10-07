@@ -1,13 +1,19 @@
 {
   "name": "electron",
   "version": "0.0.0",
+  "main": "electron/main.js",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:electron": "node dist/electron/server/server.mjs"
+    "serve:ssr:electron": "node dist/electron/server/server.mjs",
+    "build:electron": "ng build -c electron",
+    "electron": "electron .",
+    "electron:serve": "cross-env NODE_ENV=development electron .",
+    "electron:dev": "concurrently -k \"npm run start\" \"wait-on -d 1000 -t 60000 tcp:4200 && cross-env NODE_ENV=development electron .\"",
+    "electron:start": "npm run build:electron && electron ."
   },
   "private": true,
   "packageManager": "npm@11.12.1",
@@ -31,11 +37,15 @@
     "@tailwindcss/postcss": "^4.1.12",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
+    "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
+    "electron": "^44.6.0",
     "jsdom": "^28.0.0",
     "postcss": "^8.5.3",
     "prettier": "^3.8.1",
     "tailwindcss": "^4.1.12",
     "typescript": "~6.0.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.8",
+    "wait-on": "^9.5.1"
   }
 }
