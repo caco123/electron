@@ -12,7 +12,7 @@
     "build:electron": "ng build -c electron",
     "electron": "electron .",
     "electron:serve": "cross-env NODE_ENV=development electron .",
-    "electron:dev": "concurrently -k \"npm run start\" \"wait-on -d 1000 -t 60000 tcp:4200 && cross-env NODE_ENV=development electron .\"",
+    "electron:dev": "node electron/dev.js",
     "electron:start": "npm run build:electron && electron ."
   },
   "private": true,
