@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.tuapp.electron",
+  "productName": "MiAplicacion",
+  "directories": {
+    "output": "../release"
+  },
+  "files": [
+    "**/*",
+    "!electron-builder*.json",
+    "../dist/electron/**/*",
+    "../package.json"
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ]
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true
+  }
+}
