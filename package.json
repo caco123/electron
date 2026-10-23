@@ -14,7 +14,9 @@
     "electron:serve": "cross-env NODE_ENV=development electron .",
     "electron:dev": "node electron/dev.js",
     "electron:start": "npm run build:electron && electron .",
-    "dist:win": "npm run build:electron && electron-builder --win --x64 --config electron/electron-builder.win.json"
+    "dist:win": "npm run build:electron && node electron/build.js",
+    "dist:win:admin": "npm run build:electron && electron-builder --win --x64 --config electron/electron-builder.win.json -c.productName=\"MiAplicacion Admin\" -c.appId=\"com.tuapp.electron.admin\" -c.nsis.shortcutName=\"MiAplicacion Admin\"",
+    "dist:win:user": "npm run build:electron && electron-builder --win --x64 --config electron/electron-builder.win.json -c.productName=\"MiAplicacion User\" -c.appId=\"com.tuapp.electron.user\" -c.nsis.shortcutName=\"MiAplicacion User\""
   },
   "private": true,
   "packageManager": "npm@11.12.1",
