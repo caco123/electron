@@ -5,6 +5,12 @@
   "directories": {
     "output": "../release"
   },
+  "files": [
+    "**/*",
+    "!electron-builder*.json",
+    "../dist/electron/**/*",
+    "../package.json"
+  ],
   "win": {
     "target": [
       {
