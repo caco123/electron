@@ -1,6 +1,7 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TodoService } from '../../services/todo.service';
+import { ElectronService } from '../../services/electron.service';
 
 @Component({
   selector: 'app-todo-header',
@@ -10,12 +11,26 @@ import { TodoService } from '../../services/todo.service';
     <header class="mb-8">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-800">
         <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold tracking-wide uppercase mb-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
-            Productividad Diaria
+          <div class="flex items-center gap-2 mb-2 flex-wrap">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold tracking-wide uppercase">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+              Productividad Diaria
+            </div>
+            @if (electronService.isElectron() && electronService.role()) {
+              <div
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase shadow-sm"
+                [ngClass]="electronService.role() === 'admin'
+                  ? 'bg-rose-500/15 border border-rose-500/30 text-rose-300'
+                  : 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300'">
+                <span
+                  class="w-2 h-2 rounded-full"
+                  [ngClass]="electronService.role() === 'admin' ? 'bg-rose-400' : 'bg-emerald-400'"></span>
+                Rol: {{ electronService.role() === 'admin' ? 'Administrador' : 'Usuario' }}
+              </div>
+            }
           </div>
           <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">
-            Mi Lista de Tareas
+            {{ electronService.appName() || 'Mi Lista de Tareas' }}
           </h1>
           <p class="text-slate-400 text-sm mt-1 capitalize">
             {{ formattedDate }}
@@ -64,6 +79,7 @@ import { TodoService } from '../../services/todo.service';
 })
 export class TodoHeaderComponent {
   private readonly todoService = inject(TodoService);
+  readonly electronService = inject(ElectronService);
   readonly stats = this.todoService.stats;
 
   readonly formattedDate = new Intl.DateTimeFormat('es-ES', {

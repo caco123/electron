@@ -3,7 +3,7 @@
   "appId": "com.tuapp.electron",
   "productName": "MiAplicacion",
   "directories": {
-    "output": "../release"
+    "output": "release"
   },
   "files": [
     "**/*",
@@ -24,7 +24,8 @@
   "nsis": {
     "oneClick": false,
     "perMachine": false,
-    "createDesktopShortcut": true,
-    "createStartMenuShortcut": true
+    "createDesktopShortcut": false,
+    "createStartMenuShortcut": false,
+    "include": "installer.nsh"
   }
 }

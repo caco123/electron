@@ -7,6 +7,54 @@ let mainWindow = null;
 const isDev = process.env.NODE_ENV === 'development' || process.argv.includes('--dev');
 const devServerUrl = process.env.ELECTRON_START_URL || 'http://localhost:4200';
 
+function detectRole() {
+  // 1. Argumento CLI: --role=admin o --role=user
+  const roleArg = process.argv.find((arg) => arg.startsWith('--role='));
+  if (roleArg) {
+    const r = roleArg.split('=')[1].toLowerCase();
+    if (['admin', 'user'].includes(r)) return r;
+  }
+
+  // 2. Archivo role.json generado por el instalador en la carpeta del rol
+  const searchPaths = [
+    path.join(__dirname, 'role.json'),
+    path.join(__dirname, '../role.json'),
+    path.join(process.resourcesPath || '', 'role.json'),
+    path.join(app.getAppPath(), 'role.json'),
+    path.join(path.dirname(process.execPath), 'role.json'),
+  ];
+  for (const p of searchPaths) {
+    if (fs.existsSync(p)) {
+      try {
+        const parsed = JSON.parse(fs.readFileSync(p, 'utf8'));
+        if (parsed.role && ['admin', 'user'].includes(parsed.role.toLowerCase())) {
+          return parsed.role.toLowerCase();
+        }
+      } catch (_) {}
+    }
+  }
+
+  // 3. Fallback por nombre de ejecutable o ruta de instalación
+  const execPath = process.execPath.toLowerCase();
+  if (execPath.includes('admin')) return 'admin';
+  if (execPath.includes('user')) return 'user';
+
+  return 'user';
+}
+
+const currentRole = detectRole();
+const roleTitle = currentRole === 'admin' ? 'Admin' : 'User';
+const appTitle = `MiAplicacion ${roleTitle}`;
+
+// Configurar userData aislado para que las dos instalaciones puedan ejecutarse simultáneamente
+try {
+  const baseUserData = app.getPath('appData');
+  app.setPath('userData', path.join(baseUserData, `MiAplicacion-${currentRole}`));
+  app.setName(appTitle);
+} catch (err) {
+  console.warn('No se pudo configurar userData personalizado:', err.message);
+}
+
 function getIndexPath() {
   // Check common Angular dist output paths
   const possiblePaths = [
@@ -25,6 +73,7 @@ function getIndexPath() {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
+    title: appTitle,
     width: 1040,
     height: 820,
     minWidth: 520,
@@ -51,6 +100,7 @@ function createWindow() {
   });
 
   mainWindow.once('ready-to-show', () => {
+    mainWindow.setTitle(appTitle);
     mainWindow.show();
     if (isDev) {
       // mainWindow.webContents.openDevTools();
@@ -82,6 +132,8 @@ function createWindow() {
 // IPC Handlers for desktop integration
 ipcMain.handle('app:version', () => app.getVersion());
 ipcMain.handle('app:platform', () => process.platform);
+ipcMain.handle('app:role', () => currentRole);
+ipcMain.handle('app:name', () => appTitle);
 
 ipcMain.on('window:minimize', () => {
   if (mainWindow) mainWindow.minimize();
