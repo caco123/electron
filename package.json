@@ -13,7 +13,37 @@
     "electron": "electron .",
     "electron:serve": "cross-env NODE_ENV=development electron .",
     "electron:dev": "node electron/dev.js",
-    "electron:start": "npm run build:electron && electron ."
+    "electron:start": "npm run build:electron && electron .",
+    "dist:win": "npm run build:electron && electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.tuapp.electron",
+    "productName": "MiAplicacion",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "dist/electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "public/favicon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   },
   "private": true,
   "packageManager": "npm@11.12.1",
@@ -40,6 +70,7 @@
     "concurrently": "^10.0.5",
     "cross-env": "^10.1.0",
     "electron": "^44.6.0",
+    "electron-builder": "^26.15.3",
     "jsdom": "^28.0.0",
     "postcss": "^8.5.3",
     "prettier": "^3.8.1",
